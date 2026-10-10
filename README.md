@@ -4,7 +4,7 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-18+-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4+-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/Supabase%20PostgreSQL-16+-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Cloudflare D1](https://img.shields.io/badge/Cloudflare%20D1%20SQLite-Serverless-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
 
 SalonDesk is an all-in-one salon and barber shop management system engineered for modern barber shops, hair studios, beauty parlours, and unisex salons. Built with a cinematic luxury 3D hero landing page and a blazing-fast 15-second cashier POS billing terminal.
 

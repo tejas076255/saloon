@@ -10,7 +10,7 @@ class User(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     email = Column(String(255), unique=True, index=True, nullable=False)
-    hashed_password = Column(String(255), nullable=True)  # Nullable for OAuth/Supabase Auth users
+    hashed_password = Column(String(255), nullable=True)  # Nullable for OAuth/External Auth users
     full_name = Column(String(255), nullable=False)
     phone = Column(String(50), nullable=True)
     avatar_url = Column(String(500), nullable=True)

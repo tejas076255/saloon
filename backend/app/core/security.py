@@ -52,12 +52,11 @@ def decode_token(token: str) -> Optional[Dict[str, Any]]:
     except JWTError:
         pass
     
-    # If Supabase JWT Secret is provided, try verifying with Supabase secret
-    if settings.SUPABASE_JWT_SECRET:
-        try:
-            payload = jwt.decode(token, settings.SUPABASE_JWT_SECRET, algorithms=["HS256"])
-            return payload
-        except JWTError:
-            pass
+    # Try decoding with Cloudflare Edge JWT secret
+    try:
+        payload = jwt.decode(token, "salondesk_super_secret_jwt_key_cf_edge_2026", algorithms=["HS256"])
+        return payload
+    except JWTError:
+        pass
             
     return None

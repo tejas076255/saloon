@@ -1,0 +1,13 @@
+name = "salondesk"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-10-06"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "salondesk-db"
+database_id = "9f1d67a2-13d8-424e-98e1-26d277bc05ef"
+
+[vars]
+JWT_SECRET = "salondesk_super_secret_jwt_key_cf_edge_2026"
+ENVIRONMENT = "production"

@@ -1,26 +1,64 @@
 # SalonDesk Production Deployment Guide
 
-## 1. Architecture Stack Overview
-- **Frontend**: React 18 + Vite + Tailwind CSS deployed on **Vercel**.
-- **Backend**: Python 3.12+ + FastAPI + SQLAlchemy 2.0 deployed on **Render** (or AWS ECS/Railway).
-- **Database & Auth**: **Supabase** Managed PostgreSQL + Supabase Auth / JWT verification.
+## 1. Primary Architecture: Cloudflare Full-Stack Edge (Recommended)
+- **Frontend & Edge API**: React 18 + Vite + Tailwind CSS deployed on **Cloudflare Pages** with Pages Functions (`frontend/functions/api/[[route]].ts`).
+- **Database**: **Cloudflare D1** distributed SQLite relational database (`salondesk-db`).
+- **Authentication**: High-performance Edge JWT signing & verification (HMAC-SHA256 WebCrypto) with `bcryptjs` password hashing.
+- **Production URL**: `https://salondesk.pages.dev`
 
 ---
 
-## 2. Supabase Setup (Database & Auth)
+## 2. Cloudflare Pages & D1 Deployment
 
-1. Create a new Supabase project at [https://supabase.com](https://supabase.com).
-2. Retrieve the PostgreSQL connection string from **Project Settings -> Database**:
+### Prerequisites
+- Node.js 18+ and `npm`
+- Cloudflare Account & API Token / Global API Key
+- Cloudflare Wrangler CLI (`npx wrangler`)
+
+### Step 1: D1 Database Setup
+1. Create the D1 database:
+   ```bash
+   npx wrangler d1 create salondesk-db
    ```
-   postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres
+2. Note the returned `database_id` and update `frontend/wrangler.toml`:
+   ```toml
+   name = "salondesk"
+   pages_build_output_dir = "./dist"
+   compatibility_date = "2026-10-06"
+   compatibility_flags = ["nodejs_compat"]
+
+   [[d1_databases]]
+   binding = "DB"
+   database_name = "salondesk-db"
+   database_id = "YOUR_DATABASE_ID"
+
+   [vars]
+   JWT_SECRET = "your-secure-jwt-secret-key"
+   ENVIRONMENT = "production"
    ```
-3. Retrieve the **API URL**, **Anon Key**, and **JWT Secret** from **Project Settings -> API**.
+3. Run the database migration:
+   ```bash
+   npx wrangler d1 execute salondesk-db --remote --file=./d1_migration.sql
+   ```
+4. Seed demo admin and catalog data:
+   ```bash
+   npx wrangler d1 execute salondesk-db --remote --file=./seed_admin.sql
+   ```
+
+### Step 2: Build & Deploy Frontend with Edge Functions
+From the `frontend` directory:
+```bash
+npm run build
+npx wrangler pages deploy dist --project-name=salondesk
+```
 
 ---
 
-## 3. Backend Deployment on Render
+## 3. Alternative Backend: Python FastAPI on Render / Docker
 
-1. Create a new **Web Service** on Render connected to your Git repository.
+If running the Python 3.12 FastAPI backend:
+
+1. Create a **Web Service** on Render connected to the Git repository.
 2. Configure settings:
    - **Root Directory**: `backend`
    - **Environment**: `Python 3`
@@ -31,34 +69,15 @@
    PROJECT_NAME=SalonDesk Premium SaaS
    API_V1_STR=/api/v1
    SECRET_KEY=generate-a-cryptographically-secure-random-key-for-prod
-   DATABASE_URL=postgresql://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres
-   SUPABASE_URL=https://[YOUR-PROJECT-REF].supabase.co
-   SUPABASE_KEY=[YOUR-SUPABASE-ANON-KEY]
-   SUPABASE_JWT_SECRET=[YOUR-SUPABASE-JWT-SECRET]
-   CORS_ORIGINS=["https://salondesk.io","https://www.salondesk.io"]
+   DATABASE_URL=postgresql://postgres:[PASSWORD]@[HOST]:5432/postgres
+   CORS_ORIGINS=["https://salondesk.pages.dev","https://salondesk.io"]
    DEV_MODE_PAYMENTS=false
    ```
-4. Deploy the service. Test health check at `https://[YOUR-RENDER-URL]/api/health`.
+4. Test health check at `https://[YOUR-RENDER-URL]/api/health`.
 
 ---
 
-## 4. Frontend Deployment on Vercel
-
-1. Import your Git repository into Vercel.
-2. Configure settings:
-   - **Framework Preset**: Vite
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-3. Add Environment Variables:
-   ```env
-   VITE_API_BASE_URL=https://[YOUR-RENDER-URL]/api/v1
-   ```
-4. Deploy. Vercel automatically deploys the frontend and routes single-page application requests through `index.html`.
-
----
-
-## 5. Local Docker Compose (Alternative Local Setup)
+## 4. Local Docker Compose Setup
 
 To spin up the entire application locally with PostgreSQL in Docker:
 ```bash

@@ -13,9 +13,11 @@ class Settings(BaseSettings):
     
     DATABASE_URL: str = "sqlite:///./salondesk.db"
     
-    SUPABASE_URL: str = ""
-    SUPABASE_KEY: str = ""
-    SUPABASE_JWT_SECRET: str = ""
+    # Cloudflare Stack Integration
+    CLOUDFLARE_ACCOUNT_ID: str = "0ff0c6c2f6108c0e9bc82c0baa186d05"
+    CLOUDFLARE_D1_DATABASE_ID: str = "9f1d67a2-13d8-424e-98e1-26d277bc05ef"
+    CLOUDFLARE_API_KEY: str = ""
+    CLOUDFLARE_EMAIL: str = "tejasgogavale5@gmail.com"
     
     CORS_ORIGINS: List[str] = [
         "http://localhost:5173",

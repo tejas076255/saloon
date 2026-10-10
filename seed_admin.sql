@@ -1,0 +1,2 @@
+INSERT OR REPLACE INTO users (id, email, hashed_password, full_name, phone, is_active, is_superuser, created_at, updated_at) VALUES ('admin-user-001', 'admin@salondesk.com', '$2b$12$NGnlE183PhR4C4m7PbrxWON8mkZt98zAnV5y0lOQXDNMSSrGk9hNu', 'SalonDesk Super Admin', '+91 99887 76655', 1, 1, '2026-10-10 00:00:00', '2026-10-10 00:00:00');
+INSERT OR REPLACE INTO salon_members (id, salon_id, user_id, role, is_active, created_at) VALUES ('admin-mem-001', '1ae686e1-f1eb-46e6-97f8-c306f3ca2f26', 'admin-user-001', 'owner', 1, '2026-10-10 00:00:00');

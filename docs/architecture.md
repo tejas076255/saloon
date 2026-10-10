@@ -26,7 +26,7 @@ SalonDesk is a modern multi-tenant Salon and Barber Shop Management SaaS applica
                                         v
 +-----------------------------------------------------------------------------------+
 |                                  DATA LAYER                                       |
-|                  Supabase PostgreSQL / Self-Hosted PostgreSQL                     |
+|               Cloudflare D1 Database / PostgreSQL (Multi-Tenant)                  |
 |  - Salons, Profiles, SalonMembers (RBAC: owner, manager, staff)                   |
 |  - Invoices, InvoiceItems (frozen unit prices), Payments (Cash, UPI, Card)        |
 |  - Customers, Services, Products, Subscriptions, AuditLogs                        |
@@ -48,7 +48,7 @@ Tenant isolation is enforced through a dual-layer strategy:
 
 2. **Database Schema Isolation**:
    - Every tenant-owned table (`customers`, `services`, `products`, `invoices`, `payments`, `subscriptions`, `audit_logs`) contains a mandatory foreign key `salon_id` referencing `salons.id`.
-   - In PostgreSQL / Supabase, Row-Level Security (RLS) policies restrict database queries to rows matching the authenticated tenant context.
+   - Across SQL engines and Cloudflare D1, parameterized queries and tenant filters restrict database queries to rows matching the authenticated tenant context.
 
 ---
 
